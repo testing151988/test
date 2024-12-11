@@ -1,0 +1,35 @@
+name: WebdriverIO E2E Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run WDIO tests
+      run: npx wdio run ./wdio.conf.js
+
+    - name: Archive test results
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: wdio-results
+        path: ./results/
